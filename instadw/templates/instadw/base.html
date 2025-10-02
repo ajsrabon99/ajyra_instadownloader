@@ -339,8 +339,8 @@
         <div class="header-container">
             <h1>
                 <a href="{% url 'home' %}" style="text-decoration: none; color: inherit;">
-                    <img src="https://i.postimg.cc/CMRHS1wm/Whats-App-Image-2025-10-02-at-21-17-18-ea40c4ef.jpg" alt="AJYRA Logo"
-                        style="height:40px; vertical-align: middle; margin-right:10px;">
+                    <img src="https://i.postimg.cc/CMRHS1wm/Whats-App-Image-2025-10-02-at-21-17-18-ea40c4ef.jpg"
+                        alt="AJYRA Logo" style="height:40px; vertical-align: middle; margin-right:10px;">
                     AJYRA InstaDownloader
                 </a>
             </h1>
@@ -388,7 +388,15 @@
             <p>&copy; 2025 <a href="{% url 'home' %}">AJYRA InstaDownloader</a>. All rights reserved.</p>
         </div>
     </footer>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E90KT9ZRE5"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
 
+        gtag('config', 'G-E90KT9ZRE5');
+    </script>
     <script>
         const menuToggle = document.getElementById('menuToggle');
         const nav = document.getElementById('nav');
