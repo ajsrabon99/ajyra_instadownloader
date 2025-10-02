@@ -1,0 +1,477 @@
+{% extends "instadw/base.html" %}
+{% block title %}Home | AJYRA InstaDownloader{% endblock %}
+
+{% block content %}
+<style>
+    .home-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .hero-section {
+        text-align: center;
+        margin-bottom: 50px;
+        animation: fadeInUp 0.6s ease;
+    }
+
+    .hero-section h1 {
+        font-size: 42px;
+        font-weight: 800;
+        background: rgba(255, 227, 227, 0.95);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 15px;
+        line-height: 1.2;
+    }
+
+    .hero-section p {
+        font-size: 18px;
+        color: rgba(255, 255, 255, 0.95);
+        margin-bottom: 10px;
+        font-weight: 500;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Video Form Styles */
+    .video-form {
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        margin-bottom: 30px;
+        animation: fadeInUp 0.6s ease 0.2s both;
+    }
+
+    .video-form p {
+        margin-bottom: 25px;
+    }
+
+    .video-form label {
+        display: block;
+        font-size: 16px;
+        font-weight: 600;
+        color: #262626;
+        margin-bottom: 12px;
+    }
+
+    .video-form input[type="url"],
+    .video-form input[type="text"] {
+        width: 100%;
+        padding: 16px 20px;
+        font-size: 16px;
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        font-family: inherit;
+        background: #fafafa;
+    }
+
+    .video-form input[type="url"]:focus,
+    .video-form input[type="text"]:focus {
+        outline: none;
+        border-color: #e1306c;
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(225, 48, 108, 0.1);
+    }
+
+    .video-form button[type="submit"] {
+        width: 100%;
+        padding: 16px 32px;
+        font-size: 18px;
+        font-weight: 700;
+        color: #fff;
+        background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 20px rgba(225, 48, 108, 0.4);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .video-form button[type="submit"]:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(225, 48, 108, 0.5);
+    }
+
+    .video-form button[type="submit"]:active:not(:disabled) {
+        transform: translateY(0);
+    }
+
+    .video-form button[type="submit"]:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    /* Loader Styles */
+    #loader {
+        display: none;
+        text-align: center;
+        margin-top: 25px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 18px;
+        animation: fadeIn 0.3s ease;
+    }
+
+    #loader.show {
+        display: block;
+    }
+
+    .loader-spinner {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        border: 3px solid rgba(225, 48, 108, 0.3);
+        border-top-color: #e1306c;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin-right: 10px;
+        vertical-align: middle;
+    }
+
+    /* Error Styles */
+    p.error {
+        background: rgba(255, 255, 255, 0.98);
+        color: #ed4956;
+        font-weight: 600;
+        padding: 20px;
+        border-radius: 12px;
+        border-left: 5px solid #ed4956;
+        margin-top: 25px;
+        animation: shake 0.5s ease;
+        box-shadow: 0 6px 20px rgba(237, 73, 86, 0.2);
+    }
+
+    /* Video Info Styles */
+    .video-info {
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        padding: 35px;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        margin-top: 30px;
+        animation: fadeInUp 0.5s ease;
+    }
+
+    .video-info h2 {
+        font-size: 26px;
+        font-weight: 700;
+        color: #262626;
+        margin-bottom: 20px;
+        line-height: 1.4;
+    }
+
+    .video-info p {
+        font-size: 16px;
+        color: #666;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .video-info p strong {
+        color: #262626;
+        font-weight: 600;
+    }
+
+    .video-info img {
+        display: block;
+        margin: 25px auto;
+        border-radius: 16px;
+        max-width: 100%;
+        height: auto;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        transition: transform 0.3s ease;
+    }
+
+    .video-info img:hover {
+        transform: scale(1.02);
+    }
+
+    /* Actions Buttons */
+    .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-top: 25px;
+    }
+
+    .actions a {
+        flex: 1;
+        min-width: 200px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 16px 28px;
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: none;
+        color: #fff;
+        background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 20px rgba(225, 48, 108, 0.3);
+        text-align: center;
+    }
+
+    .actions a:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(225, 48, 108, 0.4);
+    }
+
+    .actions a:active {
+        transform: translateY(-1px);
+    }
+
+    /* Features Section */
+    .features-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+        margin-top: 50px;
+    }
+
+    .feature-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        padding: 30px;
+        border-radius: 16px;
+        text-align: center;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        animation: fadeInUp 0.6s ease both;
+    }
+
+    .feature-card:nth-child(1) {
+        animation-delay: 0.3s;
+    }
+
+    .feature-card:nth-child(2) {
+        animation-delay: 0.4s;
+    }
+
+    .feature-card:nth-child(3) {
+        animation-delay: 0.5s;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .feature-icon {
+        font-size: 48px;
+        margin-bottom: 15px;
+    }
+
+    .feature-card h3 {
+        font-size: 20px;
+        font-weight: 700;
+        color: #262626;
+        margin-bottom: 12px;
+    }
+
+    .feature-card p {
+        font-size: 15px;
+        color: #666;
+        line-height: 1.6;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    @keyframes shake {
+
+        0%,
+        100% {
+            transform: translateX(0);
+        }
+
+        25% {
+            transform: translateX(-10px);
+        }
+
+        75% {
+            transform: translateX(10px);
+        }
+    }
+
+    /* Responsive Design */
+    @media(max-width: 768px) {
+        .hero-section h1 {
+            font-size: 32px;
+        }
+
+        .hero-section p {
+            font-size: 16px;
+        }
+
+        .video-form {
+            padding: 30px 25px;
+        }
+
+        .video-info {
+            padding: 25px 20px;
+        }
+
+        .video-info h2 {
+            font-size: 22px;
+        }
+
+        .actions {
+            flex-direction: column;
+        }
+
+        .actions a {
+            min-width: 100%;
+        }
+
+        .features-section {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media(max-width: 480px) {
+        .hero-section h1 {
+            font-size: 26px;
+        }
+
+        .video-form {
+            padding: 25px 20px;
+        }
+
+        .video-form input[type="url"],
+        .video-form input[type="text"] {
+            padding: 14px 16px;
+            font-size: 15px;
+        }
+
+        .video-form button[type="submit"] {
+            padding: 14px 24px;
+            font-size: 16px;
+        }
+    }
+</style>
+
+<div class="home-container">
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <h1>Download Instagram Videos & Reels</h1>
+        <p>Fast, Free & Easy - No Registration Required</p>
+    </div>
+
+    <!-- ভিডিও URL form -->
+    <form method="post" class="video-form" id="videoForm">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" id="fetchBtn">Fetch Video</button>
+    </form>
+
+    <!-- Loader -->
+    <div id="loader">
+        <span class="loader-spinner"></span>
+        <span
+            style="background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Processing
+            video...</span>
+    </div>
+
+    <!-- Error show -->
+    {% if error %}
+    <p class="error">⚠️ {{ error }}</p>
+    {% endif %}
+
+    <!-- যদি ভিডিও data আসে -->
+    {% if info %}
+    <div class="video-info">
+        <h2>{{ info.title }}</h2>
+        <p><strong>👤 Uploader:</strong> {{ info.uploader }}</p>
+        <p><strong>⏱️ Duration:</strong> {{ info.duration }} sec</p>
+
+        {% if thumbnail %}
+        <img src="{{ thumbnail }}" alt="thumbnail" width="320">
+        {% endif %}
+
+        <div class="actions">
+            <!-- yt-dlp Play in Browser -->
+            <a href="{% url 'download_via_ytdlp' %}?video_url={{ video_url }}&play=true" target="_blank">
+                ▶️ Play in Browser
+            </a>
+
+            <!-- yt-dlp Download -->
+            <a href="{% url 'download_via_ytdlp' %}?video_url={{ video_url }}">
+                ⬇️ Download Video
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Features Section -->
+    <div class="features-section">
+        <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>Lightning Fast</h3>
+            <p>Download Instagram videos and reels in seconds with our optimized system.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🔒</div>
+            <h3>100% Secure</h3>
+            <p>Your privacy matters. We don't store any videos or personal information.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">💯</div>
+            <h3>Always Free</h3>
+            <p>Download unlimited videos completely free. No hidden charges, ever.</p>
+        </div>
+    </div>
+</div>
+
+<!-- JS Loader -->
+<script>
+    const form = document.getElementById('videoForm');
+    const loader = document.getElementById('loader');
+    const fetchBtn = document.getElementById('fetchBtn');
+
+    form.addEventListener('submit', function () {
+        // Loader দেখাও
+        loader.style.display = 'block';
+        loader.classList.add('show');
+        // Button disable করো যাতে multiple clicks না হয়
+        fetchBtn.disabled = true;
+        fetchBtn.textContent = 'Processing...';
+    });
+</script>
+{% endblock %}
