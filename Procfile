@@ -1,0 +1,1 @@
+web: gunicorn ajyra_instadownloader.wsgi
